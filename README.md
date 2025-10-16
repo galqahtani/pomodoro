@@ -1,10 +1,10 @@
 # pomodoro
 
-**Full screen for mac**:
-cmd + F
+**Full screen for mac:**
+\ncmd + F
 
-**Full screen for windows**:
-F11
+**Full screen for windows:**
+\nF11
 
 **Full screen for ipad**:
-Zoom in the page :)
+\nZoom in the page :)
