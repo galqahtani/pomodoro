@@ -1,4 +1,4 @@
-# **Link: https://galqahtani.github.io/pomodoro/** 
+# **Site Link: https://galqahtani.github.io/pomodoro/** 
 
 # **Full Screen Guide**
 
