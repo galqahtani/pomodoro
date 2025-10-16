@@ -1,176 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pomodoro</title>
-  <meta name="color-scheme" content="dark light" />
-  <style>
-    @font-face {
-      font-family: 'Inter';
-      src: url('fonts/Inter-Regular.woff2') format('woff2');
-      font-weight: 400;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Inter';
-      src: url('fonts/Inter-SemiBold.woff2') format('woff2');
-      font-weight: 600;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Inter';
-      src: url('fonts/Inter-ExtraBold.woff2') format('woff2');
-      font-weight: 800;
-      font-display: swap;
-    }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pomodoro</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-ExtraBold.woff2') format('woff2');
+      font-weight: 800;
+      font-display: swap;
+    }
 
-    :root{
-      --bg:#0b0b0c; --fg:#ffffff; --muted:#b7b7c0; --accent:#2f54ff;
-      --border:#ffffff26; --panel:#121219; --input:#0f0f16;
-    }
-    html,body{height:100%}
-    body{margin:0;display:grid;place-items:center;min-height:100dvh;background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .wrap{width:min(900px,92vw);text-align:center}
+    :root{
+      --bg:#0b0b0c; --fg:#ffffff; --muted:#b7b7c0; --accent:#2f54ff;
+      --border:#ffffff26; --panel:#121219; --input:#0f0f16;
+    }
+    html,body{height:100%}
+    body{margin:0;display:grid;place-items:center;min-height:100dvh;background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{width:min(900px,92vw);text-align:center}
 
-    .tabs{display:flex;gap:18px;justify-content:center;margin-top:42px;margin-bottom:28px}
-    .tab{border:1.5px solid var(--border);color:var(--fg);padding:12px 18px;border-radius:999px;font-weight:600;letter-spacing:.2px;background:transparent;cursor:pointer;transition:transform .06s ease,border-color .15s ease,background .2s}
-    .tab:hover{transform:translateY(-1px)}
-    .tab.active{background:#ffffff0f;border-color:#ffffff40}
+    .tabs{display:flex;gap:18px;justify-content:center;margin-top:42px;margin-bottom:28px}
+    .tab{border:1.5px solid var(--border);color:var(--fg);padding:12px 18px;border-radius:999px;font-weight:600;letter-spacing:.2px;background:transparent;cursor:pointer;transition:transform .06s ease,border-color .15s ease,background .2s}
+    .tab:hover{transform:translateY(-1px)}
+    .tab.active{background:#ffffff0f;border-color:#ffffff40}
 
-    .time{font-weight:800;font-size:clamp(56px,14vw,160px);line-height:1;letter-spacing:2px;margin:18px 0 26px}
+    .time{font-weight:800;font-size:clamp(56px,14vw,160px);line-height:1;letter-spacing:2px;margin:18px 0 26px}
 
-    .controls{display:flex;gap:18px;justify-content:center;align-items:center}
-    .btn{border:none;border-radius:999px;padding:16px 28px;font-weight:800;font-size:18px;cursor:pointer;transition:transform .05s ease,background .2s,opacity .2s}
-    .btn:active{transform:translateY(1px)}
-    .btn-primary{background:#fff;color:#111}
-    .btn-ghost{background:transparent;color:var(--fg);border:2px solid var(--border);padding:12px 16px;border-radius:999px}
-    .icon-btn{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:2px solid var(--border);background:transparent;color:var(--fg);cursor:pointer;font-size:22px}
+    .controls{display:flex;gap:18px;justify-content:center;align-items:center}
+    .btn{border:none;border-radius:999px;padding:16px 28px;font-weight:800;font-size:18px;cursor:pointer;transition:transform .05s ease,background .2s,opacity .2s}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:#fff;color:#111}
+    .btn-ghost{background:transparent;color:var(--fg);border:2px solid var(--border);padding:12px 16px;border-radius:999px}
+    .icon-btn{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:2px solid var(--border);background:transparent;color:var(--fg);cursor:pointer;font-size:22px}
 
-    .progress{display:none}
+    .progress{display:none}
 
-    dialog{border:none;border-radius:18px;padding:0;background:var(--panel);color:var(--fg);width:min(480px,90vw);box-shadow:0 0 25px #00000055;}
-    .sheet{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #ffffff12}
-    .sheet h3{margin:0;font-weight:800;font-size:20px}
-    .content{padding:20px;display:flex;flex-direction:column;gap:18px}
+    dialog{border:none;border-radius:18px;padding:0;background:var(--panel);color:var(--fg);width:min(480px,90vw);box-shadow:0 0 25px #00000055;}
+    .sheet{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #ffffff12}
+    .sheet h3{margin:0;font-weight:800;font-size:20px}
+    .content{padding:20px;display:flex;flex-direction:column;gap:18px}
 
-    .input-group{display:flex;flex-direction:column;gap:8px}
-    .input-row{display:flex;gap:10px;flex-wrap:wrap}
-    .input-row .input-group{flex:1;min-width:120px}
-    label{font-size:13px;color:var(--muted);font-weight:600;}
-    input[type="number"]{padding:12px 14px;border-radius:10px;border:1px solid #ffffff20;background:var(--input);color:var(--fg);font-size:16px;width:100%;}
-    input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
-    .check{display:flex;align-items:center;gap:10px}
+    .input-group{display:flex;flex-direction:column;gap:8px}
+    
+    /* FIX: Added space-between to distribute the gap properly */
+    .input-row{display:flex;gap:10px;flex-wrap:wrap; justify-content: space-between;} 
+    
+    /* FIX: Changed flex-basis to control width better and removed min-width on .input-group to allow wrapping */
+    /* Use calc for better spacing distribution */
+    .input-row .input-group{flex: 1 1 calc(33.333% - 7px);} 
 
-    .actions{display:flex;gap:10px;justify-content:flex-end;padding:18px 20px;border-top:1px solid #ffffff12}
-    .actions .btn{min-width:110px}
-    .small{font-size:12px;color:#a6a6b4;margin-top:8px;text-align:center}
-  </style>
+    label{font-size:13px;color:var(--muted);font-weight:600;}
+    input[type="number"]{padding:12px 14px;border-radius:10px;border:1px solid #ffffff20;background:var(--input);color:var(--fg);font-size:16px;width:100%;}
+    input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
+    .check{display:flex;align-items:center;gap:10px}
+
+    .actions{display:flex;gap:10px;justify-content:flex-end;padding:18px 20px;border-top:1px solid #ffffff12}
+    .actions .btn{min-width:110px}
+    .small{font-size:12px;color:#a6a6b4;margin-top:8px;text-align:center}
+  </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="tabs" role="tablist" aria-label="Modes">
-      <button class="tab active" data-mode="pomodoro" aria-selected="true">pomodoro</button>
-      <button class="tab" data-mode="short">short break</button>
-      <button class="tab" data-mode="long">long break</button>
-    </div>
+  <main class="wrap">
+    <div class="tabs" role="tablist" aria-label="Modes">
+      <button class="tab active" data-mode="pomodoro" aria-selected="true">pomodoro</button>
+      <button class="tab" data-mode="short">short break</button>
+      <button class="tab" data-mode="long">long break</button>
+    </div>
 
-    <div class="time" id="time" aria-live="polite">25:00</div>
+    <div class="time" id="time" aria-live="polite">25:00</div>
 
-    <div class="controls" aria-label="Controls">
-      <button id="startPause" class="btn btn-primary">start</button>
-      <button id="reset" class="icon-btn" title="Reset" aria-label="Reset">⟳</button>
-      <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">⚙</button>
-    </div>
+    <div class="controls" aria-label="Controls">
+      <button id="startPause" class="btn btn-primary">start</button>
+      <button id="reset" class="icon-btn" title="Reset" aria-label="Reset">⟳</button>
+      <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">⚙</button>
+    </div>
 
-    <p class="small" style="opacity:.8;margin-top:18px">Space: start/pause · R: reset · 1/2/3: switch modes</p>
-  </main>
+    <p class="small" style="opacity:.8;margin-top:18px">Space: start/pause · R: reset · 1/2/3: switch modes</p>
+  </main>
 
-  <dialog id="settings">
-    <div class="sheet">
-      <h3>Settings</h3>
-      <button id="closeSettings" class="icon-btn" aria-label="Close">✕</button>
-    </div>
-    <div class="content">
-      <div class="input-row">
-        <div class="input-group">
-          <label for="pomoMin">Pomodoro (min)</label>
-          <input id="pomoMin" type="number" min="1" max="180" step="1" />
-        </div>
-        <div class="input-group">
-          <label for="shortMin">Short break (min)</label>
-          <input id="shortMin" type="number" min="1" max="60" step="1" />
-        </div>
-        <div class="input-group">
-          <label for="longMin">Long break (min)</label>
-          <input id="longMin" type="number" min="1" max="90" step="1" />
-        </div>
-      </div>
+  <dialog id="settings">
+    <div class="sheet">
+      <h3>Settings</h3>
+      <button id="closeSettings" class="icon-btn" aria-label="Close">✕</button>
+      </div>
+    <div class="content">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="pomoMin">Pomodoro (min)</label>
+          <input id="pomoMin" type="number" min="1" max="180" step="1" />
+        </div>
+        <div class="input-group">
+          <label for="shortMin">Short break (min)</label>
+          <input id="shortMin" type="number" min="1" max="60" step="1" />
+        </div>
+        <div class="input-group">
+          <label for="longMin">Long break (min)</label>
+          <input id="longMin" type="number" min="1" max="90" step="1" />
+        </div>
+      </div>
 
-      <div class="check">
-        <input id="autoShort" type="checkbox" />
-        <label for="autoShort">Auto-start short break after Pomodoro</label>
-      </div>
-      <div class="check">
-        <input id="autoNext" type="checkbox" />
-        <label for="autoNext">Auto-start next session (toggle focus/break)</label>
-      </div>
+      <div class="check">
+        <input id="autoShort" type="checkbox" />
+        <label for="autoShort">Auto-start short break after Pomodoro</label>
+      </div>
+      <div class="check">
+        <input id="autoNext" type="checkbox" />
+        <label for="autoNext">Auto-start next session (toggle focus/break)</label>
+      </div>
 
-      <p class="small">Preferences save locally in this browser.</p>
-    </div>
-    <div class="actions">
-      <button id="save" class="btn btn-primary">Save</button>
-      <button id="cancel" class="btn btn-ghost">Cancel</button>
-    </div>
-  </dialog>
+      <p class="small">Preferences save locally in this browser.</p>
+    </div>
+    <div class="actions">
+      <button id="save" class="btn btn-primary">Save</button>
+      <button id="cancel" class="btn btn-ghost">Cancel</button>
+    </div>
+  </dialog>
 
-  <audio id="bellSound" preload="auto" src="bell.mp3"></audio>
+  <audio id="bellSound" preload="auto" src="bell.mp3"></audio>
 
-  <script>
-    const el = (id)=>document.getElementById(id);
-    const $time = el('time');
-    const $startPause = el('startPause');
-    const $reset = el('reset');
+  <script>
+    const el = (id)=>document.getElementById(id);
+    const $time = el('time');
+    const $startPause = el('startPause');
+    const $reset = el('reset');
 
-    const DFLT = { pomodoro:25, short:5, long:15, autoNext:false, autoShort:true };
-    const store = { key:'pomo:v7', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
+    const DFLT = { pomodoro:25, short:5, long:15, autoNext:false, autoShort:true };
+    const store = { key:'pomo:v7', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
 
-    let prefs = store.get();
-    let mode='pomodoro';
-    let remaining=prefs.pomodoro*60; let total=remaining; let timer=null; let running=false;
+    let prefs = store.get();
+    let mode='pomodoro';
+    let remaining=prefs.pomodoro*60; let total=remaining; let timer=null; let running=false;
 
-    const fmt=s=>{const m=Math.floor(s/60).toString().padStart(2,'0');const sec=Math.floor(s%60).toString().padStart(2,'0');return `${m}:${sec}`};
-    const updateDisplay=()=>{ $time.textContent=fmt(remaining); document.title=`${fmt(remaining)} • ${mode}`; };
-    const setMode=m=>{ mode=m; total=(prefs[m]||25)*60; remaining=total; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m)); stop(); updateDisplay(); };
+    const fmt=s=>{const m=Math.floor(s/60).toString().padStart(2,'0');const sec=Math.floor(s%60).toString().padStart(2,'0');return `${m}:${sec}`};
+    const updateDisplay=()=>{ $time.textContent=fmt(remaining); document.title=`${fmt(remaining)} • ${mode}`; };
+    const setMode=m=>{ mode=m; total=(prefs[m]||25)*60; remaining=total; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m)); stop(); updateDisplay(); };
 
-    const tick=()=>{ if(remaining>0){ remaining--; updateDisplay(); } else { complete(); } };
-    const start=()=>{ if(running) return; running=true; $startPause.textContent='pause'; timer=setInterval(tick,1000); };
-    const stop =()=>{ running=false; clearInterval(timer); timer=null; $startPause.textContent='start'; };
-    const reset=()=>{ remaining=total; updateDisplay(); };
+    const tick=()=>{ if(remaining>0){ remaining--; updateDisplay(); } else { complete(); } };
+    const start=()=>{ if(running) return; running=true; $startPause.textContent='pause'; timer=setInterval(tick,1000); };
+    const stop =()=>{ running=false; clearInterval(timer); timer=null; $startPause.textContent='start'; };
+    const reset=()=>{ remaining=total; updateDisplay(); };
 
-    function playSound(){ try{ const node=el('bellSound'); node.currentTime=0; node.play(); }catch(e){ console.warn(e);} }
+    function playSound(){ try{ const node=el('bellSound'); node.currentTime=0; node.play(); }catch(e){ console.warn(e);} }
 
-    function complete(){ stop(); remaining=0; updateDisplay(); playSound(); if(prefs.autoShort && mode==='pomodoro'){ setMode('short'); start(); return;} if(prefs.autoNext){ const next=mode==='pomodoro'?'short':'pomodoro'; setMode(next); start(); } }
+    function complete(){ stop(); remaining=0; updateDisplay(); playSound(); if(prefs.autoShort && mode==='pomodoro'){ setMode('short'); start(); return;} if(prefs.autoNext){ const next=mode==='pomodoro'?'short':'pomodoro'; setMode(next); start(); } }
 
-    const prime=()=>{ const n=el('bellSound'); n.volume=0; n.play().then(()=>{ n.pause(); n.currentTime=0; n.volume=1; }).catch(()=>{}); document.removeEventListener('click',prime); };
-    document.addEventListener('click',prime,{once:true});
+    const prime=()=>{ const n=el('bellSound'); n.volume=0; n.play().then(()=>{ n.pause(); n.currentTime=0; n.volume=1; }).catch(()=>{}); document.removeEventListener('click',prime); };
+    document.addEventListener('click',prime,{once:true});
 
-    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>setMode(btn.dataset.mode)));
-    $startPause.addEventListener('click',()=>running?stop():start());
-    $reset.addEventListener('click',()=>{ stop(); reset(); });
+    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>setMode(btn.dataset.mode)));
+    $startPause.addEventListener('click',()=>running?stop():start());
+    $reset.addEventListener('click',()=>{ stop(); reset(); });
 
-    const $dlg = el('settings');
-    const openSettings = ()=>{ el('pomoMin').value=prefs.pomodoro; el('shortMin').value=prefs.short; el('longMin').value=prefs.long; el('autoNext').checked=!!prefs.autoNext; el('autoShort').checked=!!prefs.autoShort; $dlg.showModal(); };
-    const closeSettings = ()=> $dlg.close();
-    el('settingsBtn').addEventListener('click',openSettings);
-    el('closeSettings').addEventListener('click',closeSettings);
-    el('cancel').addEventListener('click',closeSettings);
+    const $dlg = el('settings');
+    const openSettings = ()=>{ el('pomoMin').value=prefs.pomodoro; el('shortMin').value=prefs.short; el('longMin').value=prefs.long; el('autoNext').checked=!!prefs.autoNext; el('autoShort').checked=!!prefs.autoShort; $dlg.showModal(); };
+    const closeSettings = ()=> $dlg.close();
+    el('settingsBtn').addEventListener('click',openSettings);
+    el('closeSettings').addEventListener('click',closeSettings);
+    el('cancel').addEventListener('click',closeSettings);
 
-    el('save').addEventListener('click',()=>{
-      prefs={ pomodoro:Math.max(1,Math.min(180,parseInt(el('pomoMin').value)||25)), short:Math.max(1,Math.min(60,parseInt(el('shortMin').value)||5)), long:Math.max(1,Math.min(90,parseInt(el('longMin').value)||15)), autoNext:!!el('autoNext').checked, autoShort:!!el('autoShort').checked };
-      store.set(prefs); total=prefs[mode]*60; remaining=total; updateDisplay(); closeSettings(); });
+    el('save').addEventListener('click',()=>{
+      prefs={ pomodoro:Math.max(1,Math.min(180,parseInt(el('pomoMin').value)||25)), short:Math.max(1,Math.min(60,parseInt(el('shortMin').value)||5)), long:Math.max(1,Math.min(90,parseInt(el('longMin').value)||15)), autoNext:!!el('autoNext').checked, autoShort:!!el('autoShort').checked };
+      store.set(prefs); total=prefs[mode]*60; remaining=total; updateDisplay(); closeSettings(); });
 
-    setMode('pomodoro'); updateDisplay();
-  </script>
+    setMode('pomodoro'); updateDisplay();
+  </script>
 </body>
 </html>
