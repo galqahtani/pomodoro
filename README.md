@@ -1,4 +1,4 @@
-# pomodoro
+# **Full Screen Guide**
 
 ### **Full screen for mac:**
 
