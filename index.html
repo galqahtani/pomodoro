@@ -5,16 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pomodoro</title>
   <meta name="color-scheme" content="dark light" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('fonts/Inter-ExtraBold.woff2') format('woff2');
+      font-weight: 800;
+      font-display: swap;
+    }
+
     :root{
       --bg:#0b0b0c; --fg:#ffffff; --muted:#b7b7c0; --accent:#2f54ff;
       --border:#ffffff26; --panel:#121219; --input:#0f0f16;
     }
     html,body{height:100%}
-    body{margin:0;display:grid;place-items:center;min-height:100dvh;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{margin:0;display:grid;place-items:center;min-height:100dvh;background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
     .wrap{width:min(900px,92vw);text-align:center}
 
     .tabs{display:flex;gap:18px;justify-content:center;margin-top:42px;margin-bottom:28px}
@@ -110,7 +126,7 @@
     const $reset = el('reset');
 
     const DFLT = { pomodoro:25, short:5, long:15, autoNext:false, autoShort:true };
-    const store = { key:'pomo:v5', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
+    const store = { key:'pomo:v6', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
 
     let prefs = store.get();
     let mode='pomodoro';
