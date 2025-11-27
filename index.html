@@ -117,42 +117,105 @@
     const $reset = el('reset');
 
     const DFLT = { pomodoro:25, short:5, long:15, autoNext:false, autoShort:true };
-    const store = { key:'pomo:v11', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
+    const store = { key:'pomo:v12', get(){ try{return {...DFLT,...(JSON.parse(localStorage.getItem(this.key))||{})};}catch{return {...DFLT};} }, set(v){ localStorage.setItem(this.key, JSON.stringify(v)); } };
 
     let prefs = store.get();
     let mode='pomodoro';
-    let remaining=prefs.pomodoro*60; let total=remaining; let timer=null; let running=false;
+    let remaining=prefs.pomodoro*60; 
+    let total=remaining; 
+    let timer=null; 
+    let running=false;
+    let startTime=null;
+    let pausedElapsed=0;
 
     const fmt=s=>{const m=Math.floor(s/60).toString().padStart(2,'0');const sec=Math.floor(s%60).toString().padStart(2,'0');return `${m}:${sec}`};
     const updateDisplay=()=>{ $time.textContent=fmt(remaining); document.title=`${fmt(remaining)} • ${mode}`; };
-    const setMode=m=>{ mode=m; total=(prefs[m]||25)*60; remaining=total; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m)); stop(); updateDisplay(); };
+    const setMode=m=>{
+      mode=m; total=(prefs[m]||25)*60; remaining=total;
+      document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+      stop(); updateDisplay();
+    };
 
-    const tick=()=>{ if(remaining>0){ remaining--; updateDisplay(); } else { complete(); } };
-    const start=()=>{ if(running) return; running=true; $startPause.textContent='pause'; timer=setInterval(tick,1000); };
-    const stop =()=>{ running=false; clearInterval(timer); timer=null; $startPause.textContent='start'; };
-    const reset=()=>{ remaining=total; updateDisplay(); };
+    function tick(){
+      if(!running) return;
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      remaining = Math.max(total - elapsed, 0);
+      updateDisplay();
+      if(remaining <= 0) complete();
+    }
 
-    function playSound(){ try{ const node=el('bellSound'); node.currentTime=0; node.play(); }catch(e){ console.warn(e);} }
+    function start(){
+      if(running) return;
+      running = true;
+      $startPause.textContent = 'pause';
+      startTime = Date.now() - pausedElapsed * 1000;
+      timer = setInterval(tick, 1000);
+    }
 
-    function complete(){ stop(); remaining=0; updateDisplay(); playSound(); if(prefs.autoShort && mode==='pomodoro'){ setMode('short'); start(); return;} if(prefs.autoNext){ const next=mode==='pomodoro'?'short':'pomodoro'; setMode(next); start(); } }
+    function stop(){
+      if(!running) return;
+      running = false;
+      clearInterval(timer);
+      timer = null;
+      pausedElapsed = Math.floor((Date.now() - startTime) / 1000);
+      $startPause.textContent = 'start';
+    }
+
+    function reset(){
+      stop();
+      remaining = total;
+      pausedElapsed = 0;
+      updateDisplay();
+    }
+
+    function playSound(){
+      try{ const node=el('bellSound'); node.currentTime=0; node.play(); }catch(e){ console.warn(e);}
+    }
+
+    function complete(){
+      stop(); remaining=0; updateDisplay(); playSound();
+      if(prefs.autoShort && mode==='pomodoro'){ setMode('short'); start(); return;}
+      if(prefs.autoNext){ const next=mode==='pomodoro'?'short':'pomodoro'; setMode(next); start(); }
+    }
 
     const prime=()=>{ const n=el('bellSound'); n.volume=0; n.play().then(()=>{ n.pause(); n.currentTime=0; n.volume=1; }).catch(()=>{}); document.removeEventListener('click',prime); };
     document.addEventListener('click',prime,{once:true});
 
     document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>setMode(btn.dataset.mode)));
     $startPause.addEventListener('click',()=>running?stop():start());
-    $reset.addEventListener('click',()=>{ stop(); reset(); });
+    $reset.addEventListener('click',()=>{ reset(); });
 
+    document.addEventListener('visibilitychange', () => {
+      if (!running) return;
+      tick();
+    });
+
+    // Settings
     const $dlg = el('settings');
-    const openSettings = ()=>{ el('pomoMin').value=prefs.pomodoro; el('shortMin').value=prefs.short; el('longMin').value=prefs.long; el('autoNext').checked=!!prefs.autoNext; el('autoShort').checked=!!prefs.autoShort; $dlg.showModal(); };
+    const openSettings = ()=>{
+      el('pomoMin').value=prefs.pomodoro;
+      el('shortMin').value=prefs.short;
+      el('longMin').value=prefs.long;
+      el('autoNext').checked=!!prefs.autoNext;
+      el('autoShort').checked=!!prefs.autoShort;
+      $dlg.showModal();
+    };
     const closeSettings = ()=> $dlg.close();
     el('settingsBtn').addEventListener('click',openSettings);
     el('closeSettings').addEventListener('click',closeSettings);
     el('cancel').addEventListener('click',closeSettings);
 
     el('save').addEventListener('click',()=>{
-      prefs={ pomodoro:Math.max(1,Math.min(180,parseInt(el('pomoMin').value)||25)), short:Math.max(1,Math.min(60,parseInt(el('shortMin').value)||5)), long:Math.max(1,Math.min(90,parseInt(el('longMin').value)||15)), autoNext:!!el('autoNext').checked, autoShort:!!el('autoShort').checked };
-      store.set(prefs); total=prefs[mode]*60; remaining=total; updateDisplay(); closeSettings(); });
+      prefs={
+        pomodoro:Math.max(1,Math.min(180,parseInt(el('pomoMin').value)||25)),
+        short:Math.max(1,Math.min(60,parseInt(el('shortMin').value)||5)),
+        long:Math.max(1,Math.min(90,parseInt(el('longMin').value)||15)),
+        autoNext:!!el('autoNext').checked,
+        autoShort:!!el('autoShort').checked
+      };
+      store.set(prefs); total=prefs[mode]*60; remaining=total; pausedElapsed=0;
+      updateDisplay(); closeSettings();
+    });
 
     setMode('pomodoro'); updateDisplay();
   </script>
